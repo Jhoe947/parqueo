@@ -1,0 +1,7 @@
+/*
+!.gitignore
+!local-custom/
+local-custom/*
+!local-custom/parking_public/
+.venv/
+.idea/

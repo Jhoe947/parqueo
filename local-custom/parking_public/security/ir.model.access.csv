@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_parking_spot_user,parking.spot.user,model_parking_spot,base.group_user,1,1,1,0
+access_parking_spot_manager,parking.spot.manager,model_parking_spot,base.group_system,1,1,1,1
+access_parking_rate_user,parking.rate.user,model_parking_rate,base.group_user,1,0,0,0
+access_parking_rate_manager,parking.rate.manager,model_parking_rate,base.group_system,1,1,1,1
+access_parking_vehicle_user,parking.vehicle.user,model_parking_vehicle,base.group_user,1,1,1,0
+access_parking_vehicle_manager,parking.vehicle.manager,model_parking_vehicle,base.group_system,1,1,1,1
+access_parking_ticket_user,parking.ticket.user,model_parking_ticket,base.group_user,1,1,1,0
+access_parking_ticket_manager,parking.ticket.manager,model_parking_ticket,base.group_system,1,1,1,1
+access_parking_checkout_wizard,parking.checkout.wizard,model_parking_checkout_wizard,base.group_user,1,1,1,1

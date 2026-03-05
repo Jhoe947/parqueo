@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Lista de Espacios -->
+    <record id="view_parking_spot_list" model="ir.ui.view">
+        <field name="name">parking.spot.list</field>
+        <field name="model">parking.spot</field>
+        <field name="arch" type="xml">
+            <tree string="Espacios de Parqueo"
+                  decoration-success="state == 'available'"
+                  decoration-danger="state == 'occupied'"
+                  decoration-warning="state == 'reserved'">
+                <field name="name" string="Espacio"/>
+                <field name="zone" string="Zona"/>
+                <field name="floor" string="Nivel"/>
+                <field name="spot_type" string="Tipo"/>
+                <field name="state" string="Estado"/>
+                <field name="current_ticket_id" string="Ticket Activo"/>
+                <field name="ticket_count" string="Total Tickets"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Formulario de Espacio -->
+    <record id="view_parking_spot_form" model="ir.ui.view">
+        <field name="name">parking.spot.form</field>
+        <field name="model">parking.spot</field>
+        <field name="arch" type="xml">
+            <form string="Espacio de Parqueo">
+                <header>
+                    <button name="action_set_available" type="object"
+                            string="Marcar Disponible"
+                            invisible="state == 'available'"/>
+                    <button name="action_set_maintenance" type="object"
+                            string="Poner en Mantenimiento"
+                            invisible="state in ('maintenance', 'occupied')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="available,occupied,reserved,maintenance"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_tickets" type="object"
+                                class="oe_stat_button" icon="fa-ticket">
+                            <field name="ticket_count" string="Tickets" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" string="Numero de Espacio"/>
+                        <h1>
+                            <field name="name" placeholder="Ej: A-01"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Informacion del Espacio">
+                            <field name="spot_type"/>
+                            <field name="zone"/>
+                            <field name="floor"/>
+                            <field name="description"/>
+                        </group>
+                        <group string="Estado Actual">
+                            <field name="state"/>
+                            <field name="current_ticket_id" readonly="1"
+                                   invisible="state != 'occupied'"/>
+                        </group>
+                    </group>
+                    <group string="Observaciones">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Kanban de Espacios -->
+    <record id="view_parking_spot_kanban" model="ir.ui.view">
+        <field name="name">parking.spot.kanban</field>
+        <field name="model">parking.spot</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name"/>
+                <field name="state"/>
+                <field name="spot_type"/>
+                <field name="zone"/>
+                <field name="floor"/>
+                <field name="current_ticket_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top mb8">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                    </div>
+                                    <span t-attf-class="badge
+                                        #{record.state.raw_value == 'available' ? 'text-bg-success' : ''}
+                                        #{record.state.raw_value == 'occupied' ? 'text-bg-danger' : ''}
+                                        #{record.state.raw_value == 'reserved' ? 'text-bg-warning' : ''}
+                                        #{record.state.raw_value == 'maintenance' ? 'text-bg-secondary' : ''}
+                                        ">
+                                        <field name="state"/>
+                                    </span>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <div><b>Zona:</b> <field name="zone"/></div>
+                                    <div><b>Nivel:</b> <field name="floor"/></div>
+                                    <div><b>Tipo:</b> <field name="spot_type"/></div>
+                                    <t t-if="record.state.raw_value == 'occupied'">
+                                        <div>Ticket: <field name="current_ticket_id"/></div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Busqueda -->
+    <record id="view_parking_spot_search" model="ir.ui.view">
+        <field name="name">parking.spot.search</field>
+        <field name="model">parking.spot</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Espacios">
+                <field name="name" string="Numero de Espacio"/>
+                <field name="zone" string="Zona"/>
+                <separator/>
+                <filter name="available" string="Disponibles" domain="[('state','=','available')]"/>
+                <filter name="occupied" string="Ocupados" domain="[('state','=','occupied')]"/>
+                <filter name="reserved" string="Reservados" domain="[('state','=','reserved')]"/>
+                <filter name="maintenance" string="En Mantenimiento" domain="[('state','=','maintenance')]"/>
+                <separator/>
+                <filter name="standard" string="Estandar" domain="[('spot_type','=','standard')]"/>
+                <filter name="motorcycle" string="Motos" domain="[('spot_type','=','motorcycle')]"/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Estado" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Zona" name="group_zone" context="{'group_by': 'zone'}"/>
+                    <filter string="Nivel" name="group_floor" context="{'group_by': 'floor'}"/>
+                    <filter string="Tipo" name="group_type" context="{'group_by': 'spot_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Accion -->
+    <record id="action_parking_spot" model="ir.actions.act_window">
+        <field name="name">Espacios de Parqueo</field>
+        <field name="res_model">parking.spot</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="view_parking_spot_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay espacios registrados aun.
+            </p>
+            <p>Crea los espacios de parqueo de tu estacionamiento.</p>
+        </field>
+    </record>
+
+</odoo>

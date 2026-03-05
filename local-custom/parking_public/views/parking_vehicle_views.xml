@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_parking_vehicle_list" model="ir.ui.view">
+        <field name="name">parking.vehicle.list</field>
+        <field name="model">parking.vehicle</field>
+        <field name="arch" type="xml">
+            <tree string="Vehiculos"
+                  decoration-info="is_monthly == True">
+                <field name="plate" string="Placa"/>
+                <field name="owner_name" string="Propietario"/>
+                <field name="owner_phone" string="Telefono"/>
+                <field name="vehicle_type" string="Tipo"/>
+                <field name="brand" string="Marca"/>
+                <field name="color" string="Color"/>
+                <field name="is_monthly" string="Mensual"/>
+                <field name="is_currently_parked" string="En Parqueo Ahora"/>
+                <field name="ticket_count" string="Visitas"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_parking_vehicle_form" model="ir.ui.view">
+        <field name="name">parking.vehicle.form</field>
+        <field name="model">parking.vehicle</field>
+        <field name="arch" type="xml">
+            <form string="Vehiculo">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_tickets" type="object"
+                                class="oe_stat_button" icon="fa-history">
+                            <field name="ticket_count" string="Visitas" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="plate" string="Placa del Vehiculo"/>
+                        <h1><field name="plate" placeholder="Ej: P-123ABC"/></h1>
+                    </div>
+                    <group>
+                        <group string="Datos del Propietario">
+                            <field name="owner_name"/>
+                            <field name="owner_phone"/>
+                            <field name="owner_id_number"/>
+                        </group>
+                        <group string="Datos del Vehiculo">
+                            <field name="vehicle_type"/>
+                            <field name="brand"/>
+                            <field name="model"/>
+                            <field name="color"/>
+                            <field name="year"/>
+                        </group>
+                    </group>
+                    <group string="Mensualidad">
+                        <field name="is_monthly" widget="boolean_toggle"/>
+                        <field name="monthly_rate_id" invisible="not is_monthly"/>
+                        <field name="monthly_expiry" invisible="not is_monthly"/>
+                    </group>
+                    <group string="Observaciones">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_parking_vehicle_search" model="ir.ui.view">
+        <field name="name">parking.vehicle.search</field>
+        <field name="model">parking.vehicle</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Vehiculos">
+                <field name="plate" string="Placa"/>
+                <field name="owner_name" string="Propietario"/>
+                <field name="owner_phone" string="Telefono"/>
+                <separator/>
+                <filter name="monthly" string="Mensualidad Activa" domain="[('is_monthly','=',True)]"/>
+                <separator/>
+                <filter name="car" string="Automoviles" domain="[('vehicle_type','=','car')]"/>
+                <filter name="motorcycle" string="Motocicletas" domain="[('vehicle_type','=','motorcycle')]"/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Tipo de Vehiculo" name="group_type" context="{'group_by': 'vehicle_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_parking_vehicle" model="ir.actions.act_window">
+        <field name="name">Vehiculos Registrados</field>
+        <field name="res_model">parking.vehicle</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_parking_vehicle_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Ningun vehiculo registrado aun.</p>
+            <p>Registra los vehiculos y sus propietarios.</p>
+        </field>
+    </record>
+
+</odoo>

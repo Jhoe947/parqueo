@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Secuencia para tickets -->
+    <record id="seq_parking_ticket" model="ir.sequence">
+        <field name="name">Secuencia Ticket Parqueo</field>
+        <field name="code">parking.ticket</field>
+        <field name="prefix">TKT-%(year)s-</field>
+        <field name="padding">5</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <!-- Tarifas por defecto -->
+    <record id="rate_hourly_car" model="parking.rate">
+        <field name="name">Tarifa por Hora - Automóvil</field>
+        <field name="rate_type">hourly</field>
+        <field name="price">5.00</field>
+        <field name="vehicle_type">car</field>
+        <field name="min_minutes">60</field>
+        <field name="grace_minutes">10</field>
+        <field name="description">Tarifa estándar por hora para automóviles. Mínimo 1 hora. 10 minutos de gracia.</field>
+    </record>
+
+    <record id="rate_hourly_moto" model="parking.rate">
+        <field name="name">Tarifa por Hora - Motocicleta</field>
+        <field name="rate_type">hourly</field>
+        <field name="price">3.00</field>
+        <field name="vehicle_type">motorcycle</field>
+        <field name="min_minutes">60</field>
+        <field name="grace_minutes">10</field>
+        <field name="description">Tarifa por hora para motocicletas.</field>
+    </record>
+
+    <record id="rate_daily_car" model="parking.rate">
+        <field name="name">Tarifa por Día - Automóvil</field>
+        <field name="rate_type">daily</field>
+        <field name="price">30.00</field>
+        <field name="vehicle_type">car</field>
+        <field name="min_minutes">60</field>
+        <field name="grace_minutes">0</field>
+        <field name="description">Tarifa plana por día completo. Ideal para usuarios que dejan el vehículo todo el día.</field>
+    </record>
+
+    <record id="rate_monthly_car" model="parking.rate">
+        <field name="name">Mensualidad - Automóvil</field>
+        <field name="rate_type">monthly</field>
+        <field name="price">400.00</field>
+        <field name="vehicle_type">car</field>
+        <field name="min_minutes">0</field>
+        <field name="grace_minutes">0</field>
+        <field name="description">Mensualidad fija para automóviles. Acceso ilimitado durante el mes.</field>
+    </record>
+
+    <record id="rate_monthly_moto" model="parking.rate">
+        <field name="name">Mensualidad - Motocicleta</field>
+        <field name="rate_type">monthly</field>
+        <field name="price">250.00</field>
+        <field name="vehicle_type">motorcycle</field>
+        <field name="min_minutes">0</field>
+        <field name="grace_minutes">0</field>
+        <field name="description">Mensualidad para motocicletas.</field>
+    </record>
+
+    <!-- Espacios de parqueo de ejemplo -->
+    <record id="spot_a01" model="parking.spot">
+        <field name="name">A-01</field>
+        <field name="floor">1</field>
+        <field name="zone">A</field>
+        <field name="spot_type">standard</field>
+        <field name="state">available</field>
+    </record>
+    <record id="spot_a02" model="parking.spot">
+        <field name="name">A-02</field>
+        <field name="floor">1</field>
+        <field name="zone">A</field>
+        <field name="spot_type">standard</field>
+        <field name="state">available</field>
+    </record>
+    <record id="spot_a03" model="parking.spot">
+        <field name="name">A-03</field>
+        <field name="floor">1</field>
+        <field name="zone">A</field>
+        <field name="spot_type">standard</field>
+        <field name="state">available</field>
+    </record>
+    <record id="spot_a04" model="parking.spot">
+        <field name="name">A-04</field>
+        <field name="floor">1</field>
+        <field name="zone">A</field>
+        <field name="spot_type">handicapped</field>
+        <field name="state">available</field>
+        <field name="description">Espacio para discapacitados</field>
+    </record>
+    <record id="spot_b01" model="parking.spot">
+        <field name="name">B-01</field>
+        <field name="floor">1</field>
+        <field name="zone">B</field>
+        <field name="spot_type">motorcycle</field>
+        <field name="state">available</field>
+    </record>
+    <record id="spot_b02" model="parking.spot">
+        <field name="name">B-02</field>
+        <field name="floor">1</field>
+        <field name="zone">B</field>
+        <field name="spot_type">motorcycle</field>
+        <field name="state">available</field>
+    </record>
+    <record id="spot_c01" model="parking.spot">
+        <field name="name">C-01</field>
+        <field name="floor">2</field>
+        <field name="zone">C</field>
+        <field name="spot_type">vip</field>
+        <field name="state">available</field>
+        <field name="description">Espacio VIP - Nivel 2</field>
+    </record>
+    <record id="spot_c02" model="parking.spot">
+        <field name="name">C-02</field>
+        <field name="floor">2</field>
+        <field name="zone">C</field>
+        <field name="spot_type">large</field>
+        <field name="state">available</field>
+        <field name="description">Espacio para vehículos grandes</field>
+    </record>
+</odoo>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_parking_rate_list" model="ir.ui.view">
+        <field name="name">parking.rate.list</field>
+        <field name="model">parking.rate</field>
+        <field name="arch" type="xml">
+            <tree string="Tarifas">
+                <field name="name"/>
+                <field name="rate_type" string="Tipo"/>
+                <field name="vehicle_type" string="Vehículo"/>
+                <field name="price" string="Precio" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="min_minutes" string="Mín. a Cobrar (min)"/>
+                <field name="grace_minutes" string="Gracia (min)"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_parking_rate_form" model="ir.ui.view">
+        <field name="name">parking.rate.form</field>
+        <field name="model">parking.rate</field>
+        <field name="arch" type="xml">
+            <form string="Tarifa de Parqueo">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Nombre de la tarifa"/></h1>
+                    </div>
+                    <group>
+                        <group string="Configuración de Tarifa">
+                            <field name="rate_type"/>
+                            <field name="vehicle_type"/>
+                            <field name="price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="currency_id"/>
+                        </group>
+                        <group string="Reglas de Cobro" invisible="rate_type != 'hourly'">
+                            <field name="grace_minutes"/>
+                            <field name="min_minutes"/>
+                        </group>
+                    </group>
+                    <group string="Condiciones / Descripción">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_parking_rate" model="ir.actions.act_window">
+        <field name="name">Tarifas</field>
+        <field name="res_model">parking.rate</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>

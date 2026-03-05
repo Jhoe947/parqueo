@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MENÚ PRINCIPAL DE PARQUEO
+    ═══════════════════════════════════════════════════════ -->
+
+    <!-- Menú raíz -->
+    <menuitem id="menu_parking_root"
+              name="Parqueo"
+              sequence="50"
+              web_icon="parking_public,static/description/icon.png"/>
+
+    <!-- ─── Operaciones Diarias ─── -->
+    <menuitem id="menu_parking_operations"
+              name="Operaciones"
+              parent="menu_parking_root"
+              sequence="10"/>
+
+    <menuitem id="menu_parking_ticket_active"
+              name="🚗 Vehículos en Parqueo"
+              parent="menu_parking_operations"
+              action="action_parking_ticket_active"
+              sequence="10"/>
+
+    <menuitem id="menu_parking_ticket_new"
+              name="➕ Registrar Entrada"
+              parent="menu_parking_operations"
+              action="action_parking_ticket"
+              sequence="20"/>
+
+    <menuitem id="menu_parking_spots"
+              name="🅿️ Mapa de Espacios"
+              parent="menu_parking_operations"
+              action="action_parking_spot"
+              sequence="30"/>
+
+    <!-- ─── Historial ─── -->
+    <menuitem id="menu_parking_history"
+              name="Historial"
+              parent="menu_parking_root"
+              sequence="20"/>
+
+    <menuitem id="menu_parking_all_tickets"
+              name="Todos los Tickets"
+              parent="menu_parking_history"
+              action="action_parking_ticket"
+              sequence="10"/>
+
+    <menuitem id="menu_parking_vehicles"
+              name="Vehículos Registrados"
+              parent="menu_parking_history"
+              action="action_parking_vehicle"
+              sequence="20"/>
+
+    <!-- ─── Configuración ─── -->
+    <menuitem id="menu_parking_config"
+              name="Configuración"
+              parent="menu_parking_root"
+              sequence="90"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_parking_rates"
+              name="Tarifas"
+              parent="menu_parking_config"
+              action="action_parking_rate"
+              sequence="10"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_parking_spots_config"
+              name="Espacios (Admin)"
+              parent="menu_parking_config"
+              action="action_parking_spot"
+              sequence="20"
+              groups="base.group_system"/>
+
+</odoo>

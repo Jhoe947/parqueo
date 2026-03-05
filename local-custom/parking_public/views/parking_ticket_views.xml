@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Formulario de Ticket -->
+    <record id="view_parking_ticket_form" model="ir.ui.view">
+        <field name="name">parking.ticket.form</field>
+        <field name="model">parking.ticket</field>
+        <field name="arch" type="xml">
+            <form string="Ticket de Parqueo">
+                <header>
+                    <button name="action_checkout" type="object"
+                            string="Registrar Salida" class="btn-primary"
+                            invisible="state != 'open'"/>
+                    <button name="action_print_ticket" type="object"
+                            string="Imprimir Ticket" class="btn-secondary"/>
+                    <button name="action_cancel" type="object"
+                            string="Anular" class="btn-danger"
+                            invisible="state != 'open'"
+                            confirm="Anular este ticket liberará el espacio. ¿Continuar?"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="open,done"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="state != 'done'">
+                        <strong>Ticket Cerrado</strong> — Este ticket no puede ser modificado.
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" string="Número de Ticket"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Información del Vehículo">
+                            <field name="vehicle_id"
+                                   readonly="state != 'open'"/>
+                            <field name="plate" readonly="1"/>
+                            <field name="owner_name" readonly="1"/>
+                        </group>
+                        <group string="Espacio Asignado">
+                            <field name="spot_id"
+                                   domain="[('state', 'in', ['available', 'reserved'])]"
+                                   readonly="state != 'open'"/>
+                            <field name="rate_id"
+                                   readonly="state != 'open'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Registro de Tiempo">
+                            <field name="entry_time" readonly="state != 'open'"/>
+                            <field name="exit_time" readonly="1"
+                                   invisible="state == 'open'"/>
+                            <field name="duration_display" string="Tiempo Transcurrido" readonly="1"/>
+                        </group>
+                        <group string="Cobro">
+                            <field name="amount_total" readonly="1"
+                                   widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"/>
+                            <field name="amount_paid"
+                                   widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"
+                                   invisible="state == 'open'"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Registrado por">
+                        <field name="user_id" readonly="1"/>
+                        <field name="cashier_exit_id" readonly="1"
+                               invisible="state == 'open'"/>
+                    </group>
+                    <group string="Observaciones">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Lista de Tickets -->
+    <record id="view_parking_ticket_list" model="ir.ui.view">
+        <field name="name">parking.ticket.list</field>
+        <field name="model">parking.ticket</field>
+        <field name="arch" type="xml">
+            <tree string="Tickets de Parqueo"
+                  decoration-success="state == 'open'"
+                  decoration-danger="state == 'cancelled'">
+                <field name="name" string="Ticket #"/>
+                <field name="plate" string="Placa"/>
+                <field name="owner_name" string="Propietario"/>
+                <field name="spot_id" string="Espacio"/>
+                <field name="rate_id" string="Tarifa"/>
+                <field name="entry_time" string="Entrada"/>
+                <field name="exit_time" string="Salida"/>
+                <field name="duration_display" string="Duracion"/>
+                <field name="amount_total" string="Total"
+                       widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" string="Estado"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Kanban Tickets Activos -->
+    <record id="view_parking_ticket_kanban" model="ir.ui.view">
+        <field name="name">parking.ticket.kanban</field>
+        <field name="model">parking.ticket</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name"/>
+                <field name="plate"/>
+                <field name="owner_name"/>
+                <field name="spot_id"/>
+                <field name="entry_time"/>
+                <field name="duration_display"/>
+                <field name="amount_total"/>
+                <field name="state"/>
+                <field name="currency_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title text-primary">
+                                            <field name="name"/>
+                                        </strong>
+                                    </div>
+                                    <span t-attf-class="badge #{record.state.raw_value == 'open' ? 'text-bg-success' : 'text-bg-secondary'}">
+                                        <field name="state"/>
+                                    </span>
+                                </div>
+                                <div class="o_kanban_record_body mt8">
+                                    <div><b>Placa:</b> <field name="plate"/> — <field name="owner_name"/></div>
+                                    <div><b>Espacio:</b> <field name="spot_id"/></div>
+                                    <div><b>Entrada:</b> <field name="entry_time" widget="datetime"/></div>
+                                    <div><b>Tiempo:</b> <field name="duration_display"/></div>
+                                </div>
+                                <div class="o_kanban_record_bottom mt8">
+                                    <div class="oe_kanban_bottom_left">
+                                        <span class="text-success fw-bold">
+                                            Total: <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        </span>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right" t-if="record.state.raw_value == 'open'">
+                                        <button name="action_checkout" type="object"
+                                                class="btn btn-primary btn-sm">
+                                            Registrar Salida
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Búsqueda -->
+    <record id="view_parking_ticket_search" model="ir.ui.view">
+        <field name="name">parking.ticket.search</field>
+        <field name="model">parking.ticket</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Tickets">
+                <field name="name" string="Número de Ticket"/>
+                <field name="plate" string="Placa"/>
+                <field name="owner_name" string="Propietario"/>
+                <field name="spot_id" string="Espacio"/>
+                <separator/>
+                <filter name="open" string="En Parqueo (Activos)" domain="[('state','=','open')]"/>
+                <filter name="done" string="Cerrados" domain="[('state','=','done')]"/>
+                <filter name="cancelled" string="Anulados" domain="[('state','=','cancelled')]"/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Estado" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Espacio" name="group_spot" context="{'group_by': 'spot_id'}"/>
+                    <filter string="Tarifa" name="group_rate" context="{'group_by': 'rate_id'}"/>
+                    <filter string="Fecha Entrada" name="group_entry" context="{'group_by': 'entry_time:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción todos los tickets -->
+    <record id="action_parking_ticket" model="ir.actions.act_window">
+        <field name="name">Todos los Tickets</field>
+        <field name="res_model">parking.ticket</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="search_view_id" ref="view_parking_ticket_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No hay tickets registrados.</p>
+            <p>Registra la entrada de un vehículo para generar el primer ticket.</p>
+        </field>
+    </record>
+
+    <!-- Acción solo activos -->
+    <record id="action_parking_ticket_active" model="ir.actions.act_window">
+        <field name="name">Vehículos en Parqueo</field>
+        <field name="res_model">parking.ticket</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('state','=','open')]</field>
+        <field name="search_view_id" ref="view_parking_ticket_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">El parqueo está vacío.</p>
+            <p>Registra la entrada de un vehículo.</p>
+        </field>
+    </record>
+
+    <!-- Wizard de Salida -->
+    <record id="view_parking_checkout_wizard" model="ir.ui.view">
+        <field name="name">parking.checkout.wizard.form</field>
+        <field name="model">parking.checkout.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Registrar Salida de Vehículo">
+                <sheet>
+                    <div class="alert alert-info" role="alert">
+                        Verifique los datos antes de confirmar. Esta acción liberará el espacio.
+                    </div>
+                    <group string="Resumen del Ticket">
+                        <group>
+                            <field name="ticket_id" readonly="1"/>
+                            <field name="plate" readonly="1"/>
+                            <field name="owner_name" readonly="1"/>
+                            <field name="spot_name" readonly="1" string="Espacio"/>
+                        </group>
+                        <group>
+                            <field name="rate_name" readonly="1" string="Tarifa"/>
+                            <field name="entry_time" readonly="1"/>
+                            <field name="duration_display" readonly="1" string="Tiempo en Parqueo"/>
+                        </group>
+                    </group>
+                    <group string="Cobro">
+                        <group>
+                            <field name="amount_total" readonly="1" string="Total a Pagar"/>
+                            <field name="amount_paid"/>
+                        </group>
+                        <group>
+                            <field name="amount_change" readonly="1" string="Vuelto"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm_checkout" type="object"
+                            string="Confirmar Salida y Cobro" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>
