@@ -5,3 +5,4 @@ local-custom/*
 !local-custom/parking_public/
 .venv/
 .idea/
+!local-custom/parking_v2/

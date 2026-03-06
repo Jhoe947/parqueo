@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_parking2_ticket_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="row mb-4 text-center">
+                            <div class="col-12">
+                                <h2 class="fw-bold">TICKET DE PARQUEO</h2>
+                                <h3 class="text-primary">#<span t-esc="o.name"/></h3>
+                                <span t-attf-class="badge fs-6
+                                    #{'bg-success' if o.state == 'open' else ''}
+                                    #{'bg-secondary' if o.state == 'done' else ''}
+                                    #{'bg-danger' if o.state == 'cancelled' else ''}">
+                                    <t t-if="o.state == 'open'">EN PARQUEO</t>
+                                    <t t-if="o.state == 'done'">SALIDA REGISTRADA</t>
+                                    <t t-if="o.state == 'cancelled'">ANULADO</t>
+                                </span>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <h5 class="fw-bold">Vehiculo</h5>
+                                <table class="table table-sm table-bordered">
+                                    <tr>
+                                        <td class="fw-bold bg-light">Placa</td>
+                                        <td class="fw-bold text-primary fs-5"><span t-esc="o.plate"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold bg-light">Propietario</td>
+                                        <td><span t-esc="o.owner_name"/></td>
+                                    </tr>
+                                    <tr t-if="o.vehicle_id.brand">
+                                        <td class="fw-bold bg-light">Marca</td>
+                                        <td><span t-esc="o.vehicle_id.brand"/> <span t-esc="o.vehicle_id.model or ''"/></td>
+                                    </tr>
+                                    <tr t-if="o.vehicle_id.color">
+                                        <td class="fw-bold bg-light">Color</td>
+                                        <td><span t-esc="o.vehicle_id.color"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <h5 class="fw-bold">Parqueo</h5>
+                                <table class="table table-sm table-bordered">
+                                    <tr>
+                                        <td class="fw-bold bg-light">Espacio</td>
+                                        <td class="fw-bold text-success fs-5"><span t-esc="o.spot_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold bg-light">Zona / Nivel</td>
+                                        <td><span t-esc="o.spot_id.zone or '-'"/> / <span t-esc="o.spot_id.floor or '1'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold bg-light">Tarifa</td>
+                                        <td><span t-esc="o.rate_id.name"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h5 class="fw-bold">Registro de Tiempo</h5>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <td class="fw-bold bg-light" width="30%">Hora de Entrada</td>
+                                        <td class="fs-5"><span t-esc="o.entry_time.strftime('%d/%m/%Y %H:%M:%S') if o.entry_time else '-'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold bg-light">Hora de Salida</td>
+                                        <td class="fs-5">
+                                            <t t-if="o.exit_time"><span t-esc="o.exit_time.strftime('%d/%m/%Y %H:%M:%S')"/></t>
+                                            <t t-else=""><span class="text-muted">En Parqueo...</span></t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold bg-light">Tiempo Total</td>
+                                        <td class="fw-bold fs-5"><span t-esc="o.duration_display"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h5 class="fw-bold">Cobro</h5>
+                                <table class="table table-bordered">
+                                    <tr t-if="o.discount_applied">
+                                        <td class="fw-bold bg-light">Descuento Cliente Frecuente</td>
+                                        <td><span t-esc="'%.0f%%' % o.discount_applied"/></td>
+                                    </tr>
+                                    <tr class="table-primary">
+                                        <td class="fw-bold fs-5">TOTAL</td>
+                                        <td class="fw-bold fs-4 text-end text-primary">
+                                            <span t-esc="o.currency_id.symbol"/><span t-esc="'%.2f' % o.amount_total"/>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="o.state == 'done'">
+                                        <td class="fw-bold">Monto Recibido</td>
+                                        <td class="text-end text-success fw-bold">
+                                            <span t-esc="o.currency_id.symbol"/><span t-esc="'%.2f' % o.amount_paid"/>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="o.state == 'done' and o.amount_paid > o.amount_total">
+                                        <td class="fw-bold">Vuelto</td>
+                                        <td class="text-end fw-bold">
+                                            <span t-esc="o.currency_id.symbol"/><span t-esc="'%.2f' % (o.amount_paid - o.amount_total)"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row mt-4 text-center text-muted">
+                            <small>
+                                Cajero: <span t-esc="o.user_id.name"/> |
+                                <span t-esc="o.company_id.name"/>
+                            </small>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

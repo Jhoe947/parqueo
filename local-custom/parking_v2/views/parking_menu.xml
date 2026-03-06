@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_parking_root"
+              name="Parqueo V2"
+              sequence="50"/>
+
+    <menuitem id="menu_parking_operations"
+              name="Operaciones"
+              parent="menu_parking_root"
+              sequence="10"/>
+
+    <menuitem id="menu_parking_ticket_active"
+              name="Vehiculos en Parqueo"
+              parent="menu_parking_operations"
+              action="action_parking_ticket_active"
+              sequence="10"/>
+
+    <menuitem id="menu_parking_ticket_new"
+              name="Registrar Entrada"
+              parent="menu_parking_operations"
+              action="action_parking_ticket"
+              sequence="20"/>
+
+    <menuitem id="menu_parking_spots"
+              name="Mapa de Espacios"
+              parent="menu_parking_operations"
+              action="action_parking_spot"
+              sequence="30"/>
+
+    <menuitem id="menu_parking_history"
+              name="Historial"
+              parent="menu_parking_root"
+              sequence="20"/>
+
+    <menuitem id="menu_parking_all_tickets"
+              name="Todos los Tickets"
+              parent="menu_parking_history"
+              action="action_parking_ticket"
+              sequence="10"/>
+
+    <menuitem id="menu_parking_vehicles"
+              name="Vehiculos Registrados"
+              parent="menu_parking_history"
+              action="action_parking_vehicle"
+              sequence="20"/>
+
+    <menuitem id="menu_parking_config"
+              name="Configuracion"
+              parent="menu_parking_root"
+              sequence="90"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_parking_rates"
+              name="Tarifas"
+              parent="menu_parking_config"
+              action="action_parking_rate"
+              sequence="10"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_parking_spots_config"
+              name="Espacios"
+              parent="menu_parking_config"
+              action="action_parking_spot"
+              sequence="20"
+              groups="base.group_system"/>
+
+</odoo>
