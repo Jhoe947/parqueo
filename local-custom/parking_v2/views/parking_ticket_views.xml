@@ -105,14 +105,22 @@
                                    invisible="discount_applied == 0"
                                    string="Descuento Frecuente (%)"/>
                             <field name="amount_total" readonly="1"
+                                   invisible="state == 'done'"
                                    widget="monetary"
-                                   options="{'currency_field': 'currency_id'}"/>
+                                   options="{'currency_field': 'currency_id'}"
+                                   string="Total Estimado"/>
+                            <field name="amount_final" readonly="1"
+                                   invisible="state != 'done'"
+                                   widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"
+                                   string="Total Cobrado"/>
                             <field name="currency_id" invisible="1"/>
                         </group>
                         <group invisible="state == 'open'">
-                            <field name="amount_paid"
+                            <field name="amount_paid" readonly="1"
                                    widget="monetary"
-                                   options="{'currency_field': 'currency_id'}"/>
+                                   options="{'currency_field': 'currency_id'}"
+                                   string="Monto Recibido"/>
                         </group>
                     </group>
 
@@ -289,6 +297,9 @@
                         <group>
                             <field name="amount_change" readonly="1"
                                    string="Vuelto a Entregar"/>
+                            <field name="discount_applied" readonly="1"
+                                   invisible="discount_applied == 0"
+                                   string="Descuento (%)"/>
                         </group>
                     </group>
                 </sheet>
